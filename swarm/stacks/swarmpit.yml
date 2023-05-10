@@ -8,9 +8,15 @@ services:
       - SWARMPIT_INFLUXDB=http://influxdb:8086
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 888:8080
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
     networks:
       - net
-      - traefik-public
     deploy:
       resources:
         limits:
@@ -22,16 +28,6 @@ services:
       placement:
         constraints:
           - node.role == manager
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
-        - traefik.http.routers.swarmpit-http.entrypoints=http
-        - traefik.http.routers.swarmpit-http.middlewares=https-redirect)
-        - traefik.http.routers.swarmpit-https.entrypoints=https
-        - traefik.http.routers.swarmpit-https.tls=true
-        - traefik.http.routers.swarmpit-https.tls.certresolver=le
-        - traefik.http.services.swarmpit.loadbalancer.server.port=8080
 
   db:
     image: couchdb:2.3.0
@@ -43,30 +39,26 @@ services:
       resources:
         limits:
           cpus: '0.30'
-          memory: 512M
+          memory: 256M
         reservations:
           cpus: '0.15'
-          memory: 256M
-      placement:
-        constraints:
-          - node.labels.swarmpit.db-data == true
+          memory: 128M
+
   influxdb:
-    image: influxdb:1.7
+    image: influxdb:1.8
     volumes:
       - influx-data:/var/lib/influxdb
     networks:
       - net
     deploy:
       resources:
-        reservations:
-          cpus: '0.3'
-          memory: 128M
         limits:
-          cpus: '0.6'
+          cpus: '0.60'
           memory: 512M
-      placement:
-        constraints:
-          - node.labels.swarmpit.influx-data == true
+        reservations:
+          cpus: '0.30'
+          memory: 128M
+
   agent:
     image: swarmpit/agent:latest
     environment:
@@ -77,6 +69,8 @@ services:
       - net
     deploy:
       mode: global
+      labels:
+        swarmpit.agent: 'true'
       resources:
         limits:
           cpus: '0.10'
@@ -88,9 +82,6 @@ services:
 networks:
   net:
     driver: overlay
-    attachable: true
-  traefik-public:
-    external: true
 
 volumes:
   db-data:
