@@ -1,0 +1,11 @@
+name: Deploy to Docker Swarm
+on: push
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Deploy to Docker Swarm
+      run: |
+        docker stack deploy -c /swarm/stacks/swarmpit.yml Swarmpit
