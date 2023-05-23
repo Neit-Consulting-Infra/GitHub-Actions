@@ -24,7 +24,7 @@ services:
           memory: 1024M
         reservations:
           cpus: '0.25'
-          memory: 524
+          memory: 524M
       placement:
         constraints:
           - node.role == manager
