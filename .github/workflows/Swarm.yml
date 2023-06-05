@@ -1,11 +1,27 @@
 name: Deploy to Docker Swarm
-on: push
+
+on:
+  push:
+    paths:
+      - 'swarm/stacks/*.yml'
+
 jobs:
   deploy:
     runs-on: self-hosted
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Deploy to Docker Swarm
-      run: |
-        docker stack deploy -c swarm/stacks/swarmpit.yml Swarmpit
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get list of changed files
+        id: getfile
+        run: |
+          echo "::set-output name=files::$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})"
+      
+      - name: Deploy to Docker Swarm
+        run: |
+          for file in ${{ steps.getfile.outputs.files }}; do
+            if [[ $file == swarm/stacks/*.yml ]]; then
+              stack=$(basename "${file%.*}")
+              docker stack deploy -c $file $stack
+            fi
+          done
