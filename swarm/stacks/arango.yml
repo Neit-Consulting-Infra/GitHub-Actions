@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   arangodb:
-    image: arangodb/arangodb:3.10.1
+    image: arangodb/arangodb:3.10
     volumes:
       - arangodb:/var/lib/arangodb3
       - arango-apps:/var/lib/arangodb3-apps
