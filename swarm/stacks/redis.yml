@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  redis:
+    image: redis:7.0.9
+    volumes:
+      - redis-data:/data
+    networks:
+      - redis-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+networks:
+  redis-net:
+
+volumes:
+  redis-data:
