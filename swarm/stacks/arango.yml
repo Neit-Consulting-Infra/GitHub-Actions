@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.7'
 
 services:
   arangodb:
@@ -7,11 +7,7 @@ services:
       - arangodb:/var/lib/arangodb3
       - arango-apps:/var/lib/arangodb3-apps
     environment:
-      - ARANGO_ROOT_PASSWORD_FILE=/run/secrets/arangodb_root_password
-    secrets:
-      - arangodb_root_password
-    networks:
-      - arangodb
+      - ARANGO_ROOT_PASSWORD: Ohng0Ior
     deploy:
       replicas: 1
       restart_policy:
@@ -22,10 +18,3 @@ services:
 volumes:
   arangodb:
   arango-apps:
-
-networks:
-  arangodb:
-
-secrets:
-  arangodb_root_password:
-    external: true
