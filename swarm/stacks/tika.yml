@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  tika:
+    image: apache/tika:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - 9998:9998
+    networks:
+      - tika_net
+
+networks:
+  tika_net:
