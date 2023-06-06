@@ -12,26 +12,24 @@ services:
     ports:
       - 8000:8000
   tas-back:
-      container_name: "tas-back"
-      image: benkockyo/tas:back
-      restart: always
-      volumes:
-          - /var/lib/docker/volumes/localjs/local.js:/srv/tas/tas-back/config/local.js
-      ports:
-          - "8001:8001"
+    image: benkockyo/tas:back
+    restart: always
+    volumes:
+        - /var/lib/docker/volumes/localjs/local.js:/srv/tas/tas-back/config/local.js
+    ports:
+        - "8001:8001"
   database:
-      container_name: database
-      image: mcr.microsoft.com/mssql/server:2019-latest
-      restart: always
-      volumes:
-          - database:/scripts/
-      ports:
-          - 1433:1433
-      user: root
-      environment:
-          - ACCEPT_EULA=Y
-          - SA_PASSWORD=Docker1221@
-          - MSSQL_PID=Developer
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: always
+    volumes:
+        - database:/scripts/
+    ports:
+        - 1433:1433
+    user: root
+    environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=Docker1221@
+        - MSSQL_PID=Developer
 
 
 volumes:
