@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  tas-front:
+    image: drmax-tas/front:latest
+    volumes:
+      - tasjs:/srv/tas/tas-front/config/tas.js
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - 8000:8000
+  tas-back:
+      container_name: "tas-back"
+      image: drmax-tas/back:latest
+      restart: always
+      volumes:
+          - localjs:/srv/tas/tas-back/config/local.js
+      ports:
+          - "8001:8001"
+  database:
+      container_name: database
+      image: mcr.microsoft.com/mssql/server:2019-latest
+      restart: always
+      volumes:
+          - /home/tas/docker/tas/database/:/scripts/
+      ports:
+          - 1433:1433
+      user: root
+      environment:
+          - ACCEPT_EULA=Y
+          - SA_PASSWORD=Docker1221@
+          - MSSQL_PID=Developer
+      command:
+          - ./scripts/init/init.sh
+
+
+volumes:
+  tasjs:
+  localjs:
