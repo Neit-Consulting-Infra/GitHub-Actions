@@ -7,6 +7,7 @@ services:
       - redis-data:/data
     networks:
       - redis-net
+      - TASTEST
     deploy:
       replicas: 1
       restart_policy:
@@ -14,6 +15,8 @@ services:
 
 networks:
   redis-net:
+  TASTEST:
+    external: true
 
 volumes:
   redis-data:

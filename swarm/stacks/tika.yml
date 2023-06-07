@@ -11,6 +11,9 @@ services:
       - 9998:9998
     networks:
       - tika_net
+      - TASTEST
 
 networks:
   tika_net:
+  TASTEST:
+    external: true
