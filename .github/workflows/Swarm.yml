@@ -20,8 +20,13 @@ jobs:
       - name: Deploy to Docker Swarm
         run: |
           for file in ${{ steps.getfile.outputs.files }}; do
-            if [[ $file == swarm/stacks/*.yml ]]; then
-              stack=$(basename "${file%.*}")
-              docker stack deploy -c $file $stack
-            fi
+            case $file in
+              swarm/stacks/*.yml)
+                stack=$(basename "${file%.*}")
+                docker stack deploy -c $file $stack
+                ;;
+              *)
+                echo "Ignoring file: $file"
+                ;;
+            esac
           done
