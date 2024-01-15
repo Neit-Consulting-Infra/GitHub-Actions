@@ -1,0 +1,46 @@
+name: Tag image and push to repository
+
+on:
+  push:
+    tags:
+      - '**' # Push to every tag including / or hierarchical tags - v.1 etc
+  workflow_dispatch:
+    inputs:
+      run_tests:
+        description: 'Run tests before tag and push?'
+        required: true
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  Tag-image-push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    # steps:
+    #   - name: Exit if not on stable branch
+    #     if: startsWith(github.ref, 'refs/tags/') && endsWith(github.ref, '/stable/') == false
+    #     run: exit -1
+
+      - name: Build test image
+        uses: docker/build-push-action@v5
+        with:
+          image: ubuntu:latest
+          tags: localhost:5000/ubuntu:latest
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Call backend parallel tests if choice is set to true
+      - name: Run Tests (Optional)
+        if: ${{ inputs.run_tests == 'true' }}
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/${{ github.repository }}/actions/workflows/backend_parallel_tests/dispatches
+          workflow_id: trigger-test.yml
+          ref: main
+
+      - name: Push Image to registry
+        run: docker push localhost:5000/ubuntu:latest
