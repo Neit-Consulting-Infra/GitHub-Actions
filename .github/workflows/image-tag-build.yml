@@ -19,11 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
 
-    # steps:
+    steps:
     #   - name: Exit if not on stable branch
     #     if: startsWith(github.ref, 'refs/tags/') && endsWith(github.ref, '/stable/') == false
     #     run: exit -1
-
       - name: Build test image
         uses: docker/build-push-action@v5
         with:
