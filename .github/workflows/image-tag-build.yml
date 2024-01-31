@@ -2,8 +2,8 @@ name: Tag image and push to repository
 
 on:
   push:
-    tags:
-      - '**' # Push to every tag including / or hierarchical tags - v.1 etc
+    # tags:
+    #   - '**' # Push to every tag including / or hierarchical tags - v.1 etc
   workflow_dispatch:
     inputs:
       run_tests:
@@ -20,26 +20,49 @@ jobs:
     timeout-minutes: 90
 
     steps:
-    #   - name: Exit if not on stable branch
-    #     if: startsWith(github.ref, 'refs/tags/') && endsWith(github.ref, '/stable/') == false
-    #     run: exit -1
-      - name: Build test image
-        uses: docker/build-push-action@v5
-        with:
-          image: ubuntu:latest
-          tags: localhost:5000/ubuntu:latest
-
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Call backend parallel tests if choice is set to true
-      - name: Run Tests (Optional)
-        if: ${{ inputs.run_tests == 'true' }}
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/${{ github.repository }}/actions/workflows/backend_parallel_tests/dispatches
-          workflow_id: trigger-test.yml
-          ref: main
+      # - name: Verify tag is from the stable branch
+      #   if: github.event_name == 'push'
+      #   run: |
+      #     TAG_COMMIT=$(git rev-list -n 1 ${{ github.ref }})
+      #     STABLE_COMMIT=$(git rev-list -n 1 stable)
+      #     if [ "$TAG_COMMIT" != "$STABLE_COMMIT" ]; then
+      #       echo "Tag is not from stable branch."
+      #       exit 1
+      #     fi
 
-      - name: Push Image to registry
-        run: docker push localhost:5000/ubuntu:latest
+      # Call backend parallel tests if choice is set to true
+      # - name: Run Tests (Optional)
+      #   if: ${{ inputs.run_tests == 'true' }}
+      #   uses: octokit/request-action@v2.x
+      #   with:
+      #     route: POST /repos/${{ github.repository }}/actions/workflows/trigger-test/dispatches
+      #     workflow_id: trigger-test.yml
+      #     ref: main
+
+      # - name: Build and Push Docker Image
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: benkockyo/tag-test:${{ github.ref_name }}
+      #     secrets: |
+      #       username=${{ secrets.DOCKERHUB_USERNAME }}
+      #       password=${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKERHUB_PASS }}
+
+      - name: Pull Ubuntu Image
+        run: docker pull ubuntu:latest
+
+      - name: Tag the Image
+        run: docker tag ubuntu:latest benkockyo/tag-test:${{ github.ref_name }}
+
+      - name: Push the Image to Docker Hub
+        run: docker push benkockyo/tag-test:${{ github.ref_name }}

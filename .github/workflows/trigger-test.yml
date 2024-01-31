@@ -4,7 +4,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-
 jobs:
   trigger-test:
     runs-on: ubuntu-latest
@@ -12,4 +11,4 @@ jobs:
 
     steps:
       - name: Run test
-        run: docker run localhost:5000/ubuntu:latest ls -la
+        run: docker run ubuntu:latest benkockyo/tag-test:${{ github.ref_name }}
