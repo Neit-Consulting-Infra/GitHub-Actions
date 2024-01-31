@@ -34,13 +34,13 @@ jobs:
       #     fi
 
       # Call backend parallel tests if choice is set to true
-      # - name: Run Tests (Optional)
-      #   if: ${{ inputs.run_tests == 'true' }}
-      #   uses: octokit/request-action@v2.x
-      #   with:
-      #     route: POST /repos/${{ github.repository }}/actions/workflows/trigger-test/dispatches
-      #     workflow_id: trigger-test.yml
-      #     ref: main
+      - name: Run Tests (Optional)
+        if: ${{ inputs.run_tests == 'true' }}
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/${{ github.repository }}/actions/workflows/trigger-test/dispatches
+          workflow_id: trigger-test.yml
+          ref: main
 
       # - name: Build and Push Docker Image
       #   uses: docker/build-push-action@v5
