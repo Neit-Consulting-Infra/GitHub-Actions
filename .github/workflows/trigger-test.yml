@@ -1,7 +1,6 @@
 name: Trigger test
 
 on:
-  pull_request: {}
   repository_dispatch:
     types: [trigger-test-event]
 
@@ -12,4 +11,4 @@ jobs:
 
     steps:
       - name: Run test
-        run: docker run ubuntu:latest yourdockerusername/yourimagename:${{ github.ref_name }} ls -la
+        run: docker run ubuntu:latest benkockyo/tag-test:${{ github.ref_name }} ls -la
