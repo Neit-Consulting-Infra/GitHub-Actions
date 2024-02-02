@@ -11,4 +11,4 @@ jobs:
 
     steps:
       - name: Run test
-        run: docker run ubuntu:latest benkockyo/tag-test:${{ github.ref_name }} ls -la
+        run: docker run benkockyo/tag-test:${{ github.ref_name }} ls -la
