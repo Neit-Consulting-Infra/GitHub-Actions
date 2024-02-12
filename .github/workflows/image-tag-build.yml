@@ -17,6 +17,9 @@ on:
 jobs:
   Tag-image-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
     timeout-minutes: 90
 
     steps:
