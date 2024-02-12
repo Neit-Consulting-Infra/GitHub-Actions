@@ -41,7 +41,7 @@ jobs:
           route: POST /repos/${{ github.repository }}/dispatches
           data: '{"event_type":"trigger-test-event"}'
         env:
-          GITHUB_TOKEN: ${{ secrets.TAG_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Build and Push Docker Image
       #   uses: docker/build-push-action@v5
